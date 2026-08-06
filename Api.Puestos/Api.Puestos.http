@@ -1,0 +1,6 @@
+@Api.Puestos_HostAddress = http://localhost:5021
+
+GET {{Api.Puestos_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
