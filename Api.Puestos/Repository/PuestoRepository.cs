@@ -20,5 +20,13 @@ namespace Api.Puestos.Repository
                 return await connection.QueryAsync<Puesto>(sql);
             }
         }
+        public async Task<IEnumerable<Puesto>> GetDisponiblesAsync()
+        {
+            using (var connection = _dbConnectionFactory.CreateConnection())
+            {
+                var sql = "SELECT Codigo, Nombre FROM Puesto";
+                return await connection.QueryAsync<Puesto>(sql);
+            }
+        }
     }
 }

@@ -19,6 +19,15 @@ namespace Api.Puestos
                 return Results.Ok(puestos);
             })
             .WithName("GetPuestosActivos")
+            .RequireAuthorization()   //Obliga el token de autorización para acceder a este endpoint
+            .WithOpenApi();
+
+            group.MapGet("/disponibles", async ([FromServices] IPuestoService puestoService) =>
+            {
+                var puestos = await puestoService.GetDisponiblesAsync();
+                return Results.Ok(puestos);
+            })
+            .WithName("GetPuestosDisponibles")
             .WithOpenApi();
         }
     }

@@ -1,6 +1,9 @@
 using Api.Oferentes.Repository;
 using Api.Oferentes.Services;
 using Api.Oferentes;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +25,35 @@ builder.Services.AddSingleton<IDbConnectionFactory, DbConnectionFactory>();
 builder.Services.AddScoped<OferenteRepository>();
 builder.Services.AddScoped<IOferenteService, OferenteService>();
 
+//Configuración JWT
+string jwtKey = builder.Configuration["Jwt:Key"]
+    ?? throw new InvalidOperationException("No se encontró la clave JWT.");
+string jwtIssuer = builder.Configuration["Jwt:Issuer"]!;
+string jwtAudience = builder.Configuration["Jwt:Audience"]!;
+
+builder.Services
+    .AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtIssuer,
+            ValidAudience = jwtAudience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
+            ClockSkew = TimeSpan.Zero
+        };
+    });
+
+builder.Services.AddAuthorization();
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment() || app.Environment.IsStaging() || app.Environment.IsProduction())
@@ -32,6 +64,9 @@ if (app.Environment.IsDevelopment() || app.Environment.IsStaging() || app.Enviro
 
 app.UseHttpsRedirection();
 app.UseCors("ReactDev");
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapOferenteEndpoints();
 app.Run();

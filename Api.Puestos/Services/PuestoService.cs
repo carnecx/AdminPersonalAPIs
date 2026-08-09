@@ -16,5 +16,10 @@ namespace Api.Puestos.Services
         {
             return await _puestoRepository.GetActivosAsync();
         }
+
+        public async Task<IEnumerable<Puesto>> GetDisponiblesAsync()
+        {
+            return await _puestoRepository.GetDisponiblesAsync();
+        }
     }
 }

@@ -20,6 +20,7 @@ namespace Api.Oferentes
                 return Results.Ok(oferentes);
             })
             .WithName("GetOferentes")
+            .RequireAuthorization()
             .WithOpenApi();
 
             // Core8: detalle de un oferente por identificación
@@ -29,6 +30,7 @@ namespace Api.Oferentes
                 return detalle is not null ? Results.Ok(detalle) : Results.NotFound();
             })
             .WithName("GetOferenteDetalle")
+            .RequireAuthorization()
             .WithOpenApi();
 
             // Core2: oferentes relacionados a un puesto (vía concurso)
@@ -38,6 +40,7 @@ namespace Api.Oferentes
                 return Results.Ok(oferentes);
             })
             .WithName("GetOferentesPorPuesto")
+            .RequireAuthorization()
             .WithOpenApi();
 
             // Aut3: postulación de un oferente a un puesto (con CV adjunto)
